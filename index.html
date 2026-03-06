@@ -82,8 +82,8 @@
     <!-- Application Logic and Data -->
     <script>
         // --- DATA DICTIONARY ---
-        const highlightDictionary = [
-            { phrase: "AAM New Project Data Form", type: "template" },
+    const highlightDictionary = [
+            { phrase: "AAM New Project Data Form", type: "template", url: "https://docs.google.com/forms/d/e/1FAIpQLScvIosfJzLMaMHZ7IXxuKPmmBUPUahnvsfAkuSzfbQQBmQ93Q/viewform" },
             { phrase: "AAM Programme & Resources template", type: "template" },
             { phrase: "AAM International Fee Letter", type: "template" },
             { phrase: "AAM Fee Letter", type: "template" },
@@ -180,25 +180,29 @@
         const mobileOverlay = document.getElementById('mobile-overlay');
 
         // --- HIGHLIGHT TEXT FUNCTION ---
-        function formatText(text) {
-            if (!text) return '';
-            let formatted = text;
-            highlightDictionary.forEach(({ phrase, type }) => {
-                let cssClass = "";
-                let tooltip = "";
-                if (type === 'template') { cssClass = "text-red-600 font-semibold cursor-help hover:underline"; tooltip = "Project specific document / standard template"; }
-                if (type === 'new-template') { cssClass = "text-emerald-600 font-semibold cursor-help hover:underline"; tooltip = "Potential new template"; }
-                if (type === 'tracker') { cssClass = "text-blue-600 font-semibold cursor-help hover:underline"; tooltip = "Knowledge Centre / Tracker Link"; }
-                if (type === 'cpd') { cssClass = "text-purple-600 font-semibold cursor-help hover:underline"; tooltip = "Supporting info / CPD"; }
+function formatText(text) {
+    if (!text) return '';
+    let formatted = text;
+    highlightDictionary.forEach(({ phrase, type, url }) => {
+        let cssClass = "";
+        let tooltip = "";
+        if (type === 'template') { cssClass = "text-red-600 font-semibold cursor-help hover:underline"; tooltip = "Project specific document / standard template"; }
+        if (type === 'new-template') { cssClass = "text-emerald-600 font-semibold cursor-help hover:underline"; tooltip = "Potential new template"; }
+        if (type === 'tracker') { cssClass = "text-blue-600 font-semibold cursor-help hover:underline"; tooltip = "Knowledge Centre / Tracker Link"; }
+        if (type === 'cpd') { cssClass = "text-purple-600 font-semibold cursor-help hover:underline"; tooltip = "Supporting info / CPD"; }
 
-                const safePhrase = phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                const regex = new RegExp(`(${safePhrase})`, 'g');
-                
-                // Add a unique placeholder temporarily so we don't double replace
-                formatted = formatted.replace(regex, `<span class="${cssClass}" title="${tooltip}">$1</span>`);
-            });
-            return formatted;
+        const safePhrase = phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(`(${safePhrase})`, 'g');
+        
+        // Create a link if URL exists, otherwise just span
+        if (url) {
+            formatted = formatted.replace(regex, `<a href="${url}" target="_blank" class="${cssClass}" title="${tooltip}">$1</a>`);
+        } else {
+            formatted = formatted.replace(regex, `<span class="${cssClass}" title="${tooltip}">$1</span>`);
         }
+    });
+    return formatted;
+}
 
         // --- RENDER FUNCTIONS ---
         function renderSidebar() {
